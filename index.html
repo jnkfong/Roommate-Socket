@@ -1,0 +1,90 @@
+<!doctype html>
+
+<html lang="en">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Roommate Chat</title>
+  <meta name="description" content="Chatting with Roommates with Socket io">
+  <meta name="author" content="James Fong">
+  <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.4/socket.io.js"></script>
+  <style>
+      body {
+          margin-top: 30px;
+      }
+      #chat-area {
+          display: none;
+      }
+  </style>
+
+</head>
+<body>
+    <div class="container">
+        <div id="chatRoom" class="row">
+            <form id="chatRoomForm" class="col-md-12">
+                <div class="form-group">
+                    <label>Enter Chat Room code...</label>
+                    <input class="form-control" type="text" id="room-id"></input>
+                    <br/>
+                    <input type="submit" name="action" class="btn btn-primary" value="Join Room"/>
+                    <input type="submit" name="action" class="btn btn-primary" value="Create Room"/>
+                </div>
+            </form>
+        </div>
+        <div id="chat-area" class="row">
+            <div class="col-md-4">
+                <div class="online-users">
+                    <div class="card">
+                        <h3 class="card-title">Online Users</h3>
+                        <ul class="list-group" id="users"></ul>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-8">
+                <div class="chat" id="chat">
+
+                </div>
+                <form id="messageForm">
+                    <div class="form-group">
+                        <label>Enter Message...</label>
+                        <textarea class="form-control" id="message"></textarea>
+                        <br/>
+                        <input type="submit" class="btn btn-primary" value="Send Message"/>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        $(function(){
+            var socket = io.connect();
+            var $messageForm = $('#messageForm');
+            var $chatRoomForm = $('#chatRoomForm');
+            var $message = $('#message');
+            var $chat = $('#chat');
+
+            $messageForm.submit(function(e){
+                e.preventDefault();
+                socket.emit('send message', $message.val());
+                $message.val('');
+            });
+            socket.on('new message', function(data){
+                $chat.append('<div class="card-text">' + data.msg + '</div>');
+            });
+
+            $chatRoomForm.submit(function(e){
+                e.preventDefault();
+                if ($_POST['action'] == "Join Room") {
+                    alert("hi");
+                } else if ($_POST['action'] == "Create Room") {
+                    alert("bye");
+                }
+            });
+        });
+    </script>
+</body>
+</html>
