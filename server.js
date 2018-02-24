@@ -8,6 +8,7 @@ var io = require("socket.io").listen(server);
 
 users = [];
 connections = [];
+chatRooms = [];
 
 server.listen(process.env.Port || 8000);
 console.log('server running at 8000');
@@ -27,5 +28,17 @@ io.sockets.on('connection', function(socket){
     socket.on('send message', function(data) {
         console.log(data);
         io.sockets.emit('new message', {msg: data});
+    });
+
+    socket.on('join room', function(data, callback) {
+        console.log(data);
+        if(chatRooms.indexOf(data) == -1){
+            callback(false);
+        }
+        else {
+            callback(true);
+            io.sockets.emit('joined room', data);
+        }
+
     });
 });

@@ -7,7 +7,6 @@
   <title>Roommate Chat</title>
   <meta name="description" content="Chatting with Roommates with Socket io">
   <meta name="author" content="James Fong">
-  <link rel="stylesheet" href="css/main.css">
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.4/socket.io.js"></script>
@@ -15,7 +14,7 @@
       body {
           margin-top: 30px;
       }
-      #chat-area {
+      #chatArea {
           display: none;
       }
   </style>
@@ -26,15 +25,15 @@
         <div id="chatRoom" class="row">
             <form id="chatRoomForm" class="col-md-12">
                 <div class="form-group">
-                    <label>Enter Chat Room code...</label>
-                    <input class="form-control" type="text" id="room-id"></input>
+                    <label>Enter Chat Room Code...</label>
+                    <input class="form-control" type="text" id="roomID"></input>
                     <br/>
-                    <input type="submit" name="action" class="btn btn-primary" value="Join Room"/>
-                    <input type="submit" name="action" class="btn btn-primary" value="Create Room"/>
+                    <input type="submit" class="btn btn-primary" value="Join Room"/>
+                    <input type="submit" class="btn btn-primary" value="Create Room"/>
                 </div>
             </form>
         </div>
-        <div id="chat-area" class="row">
+        <div id="chatArea" class="row">
             <div class="col-md-4">
                 <div class="online-users">
                     <div class="card">
@@ -64,6 +63,7 @@
             var socket = io.connect();
             var $messageForm = $('#messageForm');
             var $chatRoomForm = $('#chatRoomForm');
+            var $roomID = $('#roomID');
             var $message = $('#message');
             var $chat = $('#chat');
 
@@ -72,17 +72,29 @@
                 socket.emit('send message', $message.val());
                 $message.val('');
             });
+
             socket.on('new message', function(data){
                 $chat.append('<div class="card-text">' + data.msg + '</div>');
             });
 
             $chatRoomForm.submit(function(e){
                 e.preventDefault();
-                if ($_POST['action'] == "Join Room") {
-                    alert("hi");
-                } else if ($_POST['action'] == "Create Room") {
-                    alert("bye");
-                }
+                alert('hi');
+                socket.emit('join room', $roomID.val(), (data) {
+                    $roomID.val('');
+                    alert(data);
+                    if(data){
+                        $('#chatRoom').css('visibility', 'none');
+                        $('#chatArea').css('visibility', 'visible');
+                    }
+                    else {
+                        $roomID.val('Invalid Code');
+                    }
+                });
+            });
+
+            socket.on('joined room', function(data){
+
             });
         });
     </script>
